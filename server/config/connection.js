@@ -7,5 +7,11 @@ mongoose.connect(
     useUnifiedTopology: true,
   }
 );
-
-module.exports = mongoose.connection;
+mongoose.connection
+  .on("open", () => console.log("The goose is open"))
+  .on("close", () => console.log("The goose is closed"))
+  .on("error", (error) => {
+    console.log(error);
+    process.exit();
+  })
+module.exports = mongoose;
