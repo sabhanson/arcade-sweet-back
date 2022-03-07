@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 
  const userSchema = new Schema({
-     userName :{
+     username :{
          type: String,
          required: true,
          unique: true,
@@ -12,9 +12,12 @@ const bcrypt = require('bcrypt');
      },
      email:{
         type: String,
-        required: true,
+        trim: true,
+        lowercase: true,
         unique: true,
-        // match: [/.+@.+\..+/, 'Must match an email address!']
+        required: 'Email address is required',
+        validate: [validateEmail, 'Please fill a valid email address'],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
      },
      password:{
         type: String,

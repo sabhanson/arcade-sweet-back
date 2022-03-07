@@ -9,11 +9,12 @@
     "seed": "node seeders/seed.js"
   },
   "dependencies": {
-    "apollo-server-express": "^3.6.3",
     "bcrypt": "^5.0.1",
+    "connect-mongo": "^4.6.0",
     "express": "^4.17.3",
-    "graphql": "^16.3.0",
-    "jsonwebtoken": "^8.5.1",
+    "express-session": "^1.17.2",
+    "jose": "^4.6.0",
+    "mongo-connect": "^0.0.6",
     "mongoose": "^6.2.4"
   },
   "devDependencies": {
