@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const User = require('../../models/User');
-const token = require('../utils/token');
+const tokenJs = require('../utils/token');
 // const auth = require('../utils/auth');
 
 //Signup
@@ -14,14 +14,15 @@ router.post('/signup', async (req, res) => {
         password: req.body.password,
 
       });
-     const token = token.getToken({username:newUser.username, email:newUser.email})
-     req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email, token:token};
-      res.json(newUser);
+    //  const token = tokenJs.getToken({username:newUser.username, email:newUser.email})
+    //  req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email, token:token};
+     req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email};
+     console.log("sesssion = "+req.session);
+     res.json(newUser);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
     }
-        catch (err) {
-            res.status(500).json(err);
-          
-        }
     });
 
 
