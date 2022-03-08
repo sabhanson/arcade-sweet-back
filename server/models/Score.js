@@ -4,12 +4,13 @@ const { Schema, model } = require('mongoose');
      score:{
          type:String,
      },
-     
-    // timestamps: {
-    //     createdAt: 'created_at',
-    //     updatedAt: 'updated_at'
-    //   }
- })
+     gamevalue:{
+         type: Number,
+         required: true
+
+     }
+   
+ }, { timestamps: true })
 
 
 const Score = model('Score', scoreSchema);

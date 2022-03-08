@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const User = require('../../models/User');
-const tokenJs = require('../utils/token');
+// const tokenJs = require('../utils/token');
 // const auth = require('../utils/auth');
 
 //Signup
@@ -12,7 +12,6 @@ router.post('/signup', async (req, res) => {
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
-
       });
     //  const token = tokenJs.getToken({username:newUser.username, email:newUser.email})
     //  req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email, token:token};
