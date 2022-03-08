@@ -47,6 +47,7 @@ const bcrypt = require('bcrypt');
 
  // set up pre-save middleware to create password
 userSchema.pre('save', async function (next) {
+    console.log("this = "+JSON.stringify(this));
     if (this.isNew || this.isModified('password')) {
       const saltRounds = 10;
       this.password = await bcrypt.hash(this.password, saltRounds);
@@ -54,6 +55,26 @@ userSchema.pre('save', async function (next) {
   
     next();
 });
+
+// userSchema.post('findOneAndUpdate', async function(next) {
+//     //https://github.com/Automattic/mongoose/issues/8291
+//     let update = {...this.getUpdate()};
+//     console.log(update);
+//     // Only run this function if password was modified
+//     if (update.$set.password){
+//         console.log("updating")
+
+//         // Hash the password
+//         const saltRounds = 10;
+//         let newPass = await bcrypt.hash(update.$set.password, saltRounds);
+//         update.$set.password = newPass
+//         await this.model.updateOne(this._condition, update);
+//         console.log(update);
+//         console.log(newPass);
+//        //this._condition means for which password is getting updated
+//     }
+   
+//   });
   
   // compare the incoming password with the hashed password
 userSchema.methods.isCorrectPassword = async function (password) {
