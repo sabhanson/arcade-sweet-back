@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../../models/User");
+const jwt = require('jsonwebtoken')
 // const tokenJs = require('../utils/token');
 
 //Get all Gamer Profiles
@@ -24,22 +25,21 @@ router.get("/Profile/:userId", async (req, res) => {
 });
 
 //Update Profile Info
-router.put("/:userId", async (req, res) => {
-  try {
-    const user = await User.findOneAndUpdate(
-      { _id: req.params.userId },
-      req.body,
-      {
-        runValidators: true,
-        new: true,
-      }
-    );
-    
-    //  req.body.password = bcrypt.hashSync(req.body.password, 10)
-    res.json(user);
-    console.log(user);
-    // { username: req.body.username, email:req.body.email, password: req.body.password},
-  } catch (error) {
+router.put("/:userId", (req, res) => {
+    console.log(req.headers)
+    const token = req.headers.authorization.split(' ').pop()
+    jwt.verify(token, 'Arcade-Sweet', (err, data)=> {
+      const userData = User.findOneAndUpdate(
+        { username: data.username },
+        req.body,
+        {
+          runValidators: true,
+          new: true,
+        }
+      )
+      res.json(userData);
+    })
+  } .catch (error) {
     console.log("error = "+error);
     res.status(500).json({ message: "ERRORRRRR" });
   }

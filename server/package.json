@@ -14,8 +14,10 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "jose": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
     "mongo-connect": "^0.0.6",
-    "mongoose": "^6.2.4"
+    "mongoose": "^6.2.4",
+    "save": "^2.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
