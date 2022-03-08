@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const User = require('../../models/User');
-// const tokenJs = require('../utils/token');
-// const auth = require('../utils/auth');
+const jwt = require('jsonwebtoken')
 
 //Signup
 router.post('/signup', async (req, res) => {
@@ -13,11 +12,8 @@ router.post('/signup', async (req, res) => {
         email: req.body.email,
         password: req.body.password,
       });
-    //  const token = tokenJs.getToken({username:newUser.username, email:newUser.email})
-    //  req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email, token:token};
-     req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email};
-    //  console.log("sesssion = "+req.session);
-     res.json(newUser);
+      const token = jwt.sign({ email: newUser.email, username: newUser.username, _id:newUser._id}, 'Arcade-Sweet')
+      res.status(200).json({newUser, token})
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
@@ -52,20 +48,11 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  req.session.save(() => {
-      // const token = token.getToken({username:newUser.username, email:newUser.email})
-      // req.session.user = {id:newUser.id, username:newUser.username, email:newUser.email, token:token};
-      req.session.user = userData.id;
-     
-      res.json({
-          user: userData,
-          message: "You are now logged in!",
-          });
-      });
-      console.log("session"+req.session);
+  const token = jwt.sign({ email: userData.email, username: userData.username, _id:userData._id}, 'Arcade-Sweet')
+  res.status(200).json({ userData, token, message:'you are now logged in'})
   }
      catch (err) {
-        res.status(400).json({ message: "No user account found!" });
+        res.status(404).json({ message: "No user account found!" });
      }
 });
 

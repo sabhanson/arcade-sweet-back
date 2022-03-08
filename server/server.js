@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const MongoStore = require("connect-mongo");
-const token = require('./controller/utils/token');
 const session = require('express-session')
 const routes = require('./controller');
 const mongoose = require('./config/connection');
@@ -24,7 +23,6 @@ const sess = {
     })
 };
 
-token.setKey();
 app.use(session(sess));
 
 app.use(express.urlencoded({ extended: false }));
