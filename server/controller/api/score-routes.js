@@ -30,9 +30,7 @@ router.get("/", async(req,res)=>{
 //new score created in a game 
 //game completed it makes post req
 router.post("/",   (req, res) => {
-    
         Score.create(req.body)
-        
           .then((newScore) => {
            return User.findOneAndUpdate(
               {   _id: req.body.user },

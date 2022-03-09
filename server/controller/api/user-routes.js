@@ -1,6 +1,7 @@
 const router = require('express').Router();
-const User = require('../../models/User');
+const User = require('../../models').User;
 const jwt = require('jsonwebtoken')
+const JWT_SECRET = 'Arcade-Sweet'
 
 //Signup
 router.post('/signup', async (req, res) => {
@@ -12,8 +13,21 @@ router.post('/signup', async (req, res) => {
         email: req.body.email,
         password: req.body.password,
       });
-      const token = jwt.sign({ email: newUser.email, username: newUser.username, _id:newUser._id}, 'Arcade-Sweet')
-      res.status(200).json({newUser, token})
+      const token = jwt.sign(
+        { 
+          email: newUser.email, 
+          username: newUser.username, 
+          _id: newUser._id
+        }, JWT_SECRET);
+      let authorization = req.headers['Authorization']
+      req.headers.authorization = 'Bearer '+token;
+      console.log(req.headers.authorization);
+      res
+        .status(200)
+        .json({
+          userData : newUser, 
+          token : token
+        });
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
@@ -24,49 +38,64 @@ router.post('/signup', async (req, res) => {
 //Login
 router.post("/login", async (req, res) => {
   try {
+    res.set('Access-Control-Allow-Origin', '*');
     const userData = await User.findOne(
-     { username: req.body.username },
-  );
-  console.log("userdata = " +userData);
-  if (!userData) {
-  res
-  .status(400)
-  .json({message: "Incorrect username or password, please try again",
-  });
-  return;
-  }
+      { username: req.body.username },
+    );
 
-  const validPassword = await userData.isCorrectPassword(
-  req.body.password
-  );
+    console.log("userdata = " +userData);
+    if (!userData) {
+      res
+        .status(400)
+        .json({message: "Incorrect username or password, please try again"});
+      
+      return;
+    }
 
-  if (!validPassword) {
+    const validPassword = await userData.isCorrectPassword(
+      req.body.password
+    );
+
+    if (!validPassword) {
+      res
+        .status(400)
+        .json({ message: "Incorrect username or password, please try again"});
+      
+      return;
+    }
+
+    const token = jwt.sign(
+      { 
+        email: userData.email, 
+        username: userData.username, 
+        _id:userData._id
+      }, JWT_SECRET)
+    
     res
-    .status(400)
-    .json({ message: "Incorrect username or password, please try again",
-          });
-    return;
+      .status(200)
+      .json({ 
+        userData : userData, 
+        token: token, 
+        message:'you are now logged in'
+      });
   }
-
-  const token = jwt.sign({ email: userData.email, username: userData.username, _id:userData._id}, 'Arcade-Sweet')
-  res.status(200).json({ userData, token, message:'you are now logged in'})
+  catch (err) {
+    res.status(404).json({ message: "No user account found!" });
   }
-     catch (err) {
-        res.status(404).json({ message: "No user account found!" });
-     }
 });
 
 //Logout
 router.post('/logout', (req, res) => {
-    if (req.session.user) {
-      req.session.destroy(() => {
-         console.log(req.session);
-        res.status(204).end();
-      });
-    } else {
+    // if (req.session.user) {
+    //   req.session.destroy(() => {
+    //      console.log(req.session);
+    //     res.status(204).end();
+    //   });
+    // } else {
      
-      res.status(404).end();
-    }
-  });
+    //   res.status(404).end();
+    // }
+  console.log(req.header)
+});
 
 module.exports = router;
