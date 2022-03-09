@@ -11,8 +11,10 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",
+    "cors": "^2.8.5",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
+    "flatted": "^3.2.5",
     "jose": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongo-connect": "^0.0.6",
