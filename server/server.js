@@ -5,7 +5,11 @@ const path = require('path');
 const routes = require('./controller');
 const mongoose = require('./config/connection');
 const cors = require("cors");
+const dotenv = require('dotenv');
 
+dotenv.config();
+
+console.log("PORT = "+process.env.PORT);
 const PORT = process.env.PORT || 3001;
 const app = express();
 
