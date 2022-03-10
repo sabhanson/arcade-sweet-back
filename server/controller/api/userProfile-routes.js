@@ -84,7 +84,7 @@ router.put("/avatarUpdate/:userId", async (req, res) => {
 router.delete("/:userId", async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ _id: req.params.userId });
-    res.json({ message: "Gamer Profile Deleted!" });
+    res.json({user, message: "Gamer Profile Deleted!" });
   } catch (error) {
     res.status(500).json({ message: "ERRORRRRR" });
   }
