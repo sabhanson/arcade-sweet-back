@@ -1,8 +1,7 @@
 const router = require("express").Router();
 const User = require("../../models").User;
-const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'Arcade-Sweet';
-
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "Arcade-Sweet";
 
 //Get all Gamer Profiles
 router.get("/allProfiles", async (req, res) => {
@@ -26,44 +25,38 @@ router.get("/Profile/:userId", async (req, res) => {
 });
 
 //Update Profile Info
-router.put("/:userId", (req, res) => {
-  try {
-    const token = req.headers.authorization.split(' ').pop()
-    console.log(token)
-    jwt.verify(token, JWT_SECRET, async (err, data)=> {
-      // console.log("data = "+JSON.stringify(data));
-      if (err) {
-        console.log(err);
-        res.status(403).json({ msg: "invalid credentials", err });
-      } else {
-        // console.log("req = "+JSON.stringify(req.body));
-        const userData = await User.findOneAndUpdate(
-          { 
-            username: data.username 
-          },
-          req.body,
-          {
-            runValidators: true,
-            new: true,
-          }
-        )
-        // console.log("userData : "+JSON.stringify(userData));
-        res
-          .status(200)
-          .json({
-            userData: userData
-          });
-        return; 
-      }
-    })
-  } catch (error) {
-    console.log("error = "+error);
-    res.status(500).json({ message: "ERRORRRRR" });
-  }
+router.put("/", async (req, res) => {
+  const token = req.headers?.authorization;
+  const decodedToken = await jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      res.status(403).json({ msg: "invalid credentials" });
+    } else {
+      return decoded;
+    }
+  });
+  User.findOneAndUpdate(
+    { username: decodedToken.username },
+    {
+      username: req.body.username,
+      email: req.body.email,
+      file_name: req.body.file_name,
+    }
+  )
+  .then((userData) => {
+    if (!data) {
+      return res.status(404)
+    }
+    return res.status(200).json(userData)
+  })
+  .catch((err) => {
+    return res.status(500).json(err)
+  })
+  
 });
 
 //Upadting Avatar
-router.put("/avatarUpdate/:userId", async (req, res) => {
+router.put("/avatarUpdate", async (req, res) => {
   try {
     const user = await User.findOneAndUpdate(
       { _id: req.params.userId },
@@ -84,7 +77,7 @@ router.put("/avatarUpdate/:userId", async (req, res) => {
 router.delete("/:userId", async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ _id: req.params.userId });
-    res.json({user, message: "Gamer Profile Deleted!" });
+    res.json({ user, message: "Gamer Profile Deleted!" });
   } catch (error) {
     res.status(500).json({ message: "ERRORRRRR" });
   }
