@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const User = require('../../models').User;
 const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'Arcade-Sweet'
+// require('dotenv').config();
+// const JWT_SECRET="Arcade-Sweet";
 
 //Signup
 router.post('/signup', async (req, res) => {
@@ -13,12 +14,14 @@ router.post('/signup', async (req, res) => {
         email: req.body.email,
         password: req.body.password,
       });
+      console.log("token = "+process.env.JWT_SECRET);
       const token = jwt.sign(
         { 
           email: newUser.email, 
           username: newUser.username, 
           _id: newUser._id
-        }, JWT_SECRET);
+        }, process.env.JWT_SECRET);
+      let authorization = req.headers['Authorization']
       req.headers.authorization = 'Bearer '+token;
       console.log(req.headers.authorization);
       res
@@ -68,7 +71,7 @@ router.post("/login", async (req, res) => {
         email: userData.email, 
         username: userData.username, 
         _id:userData._id
-      }, JWT_SECRET)
+      }, process.env.JWT_SECRET)
     
     res
       .status(200)
@@ -96,5 +99,7 @@ router.post('/logout', (req, res) => {
     // }
   console.log(req.header)
 });
+
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const User = require("../../models").User;
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = "Arcade-Sweet";
+
 
 //Get all Gamer Profiles
 router.get("/allProfiles", async (req, res) => {
@@ -14,12 +14,20 @@ router.get("/allProfiles", async (req, res) => {
   }
 });
 
-//Get one Gamer Profile
-router.get("/Profile/:userId", async (req, res) => {
+//Get one Gamer Profile (do it using tokens insted of id)
+router.get("/Profile/:token", (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.userId });
-    res.json(user);
+    jwt.verify(req.params.token, process.env.JWT_SECRET, async (err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(403).json({ msg: "Please LogIn and Re-Try", err });
+      } else {
+        const user = await User.findOne({ _id: data._id });
+        res.json(user);
+      }
+    })
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "ERRORRRRR" });
   }
 });
@@ -27,7 +35,7 @@ router.get("/Profile/:userId", async (req, res) => {
 //Update Profile Info
 router.put("/", async (req, res) => {
   const token = req.headers?.authorization;
-  const decodedToken = await jwt.verify(token, JWT_SECRET, (err, decoded) => {
+  const decodedToken = await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log(err);
       res.status(403).json({ msg: "invalid credentials" });
@@ -73,8 +81,17 @@ router.put("/avatarUpdate", async (req, res) => {
   }
 });
 
-//Deleting Gamer Profile
+//Deleting Gamer Profile (do it using tokens insted of id)
 router.delete("/:userId", async (req, res) => {
+  const token = req.headers?.authorization;
+  const decodedToken = await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      res.status(403).json({ msg: "invalid credentials" });
+    } else {
+      return decoded;
+    }
+  });
   try {
     const user = await User.findOneAndDelete({ _id: req.params.userId });
     res.json({ user, message: "Gamer Profile Deleted!" });
@@ -83,4 +100,26 @@ router.delete("/:userId", async (req, res) => {
   }
 });
 
+
+// router.delete("/", async (req, res) => {
+//   const token = req.headers?.authorization;
+//   const decodedToken = await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+//     if (err) {
+//       console.log(err);
+//       res.status(403).json({ msg: "invalid credentials" });
+//     } else {
+//       return decoded;
+//     }
+//   });
+//   User.findOneAndDelete(
+//     { username: decodedToken.username }
+//   )
+//   .then((userData) => {
+//     res.json({ user, message: "Gamer Profile Deleted!" });
+//   })
+//   .catch((error) => {
+//     res.status(500).json({ message: "ERRORRRRR" });
+//   })
+  
+// })
 module.exports = router;
