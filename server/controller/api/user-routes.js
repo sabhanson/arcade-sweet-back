@@ -19,7 +19,6 @@ router.post('/signup', async (req, res) => {
           username: newUser.username, 
           _id: newUser._id
         }, JWT_SECRET);
-      let authorization = req.headers['Authorization']
       req.headers.authorization = 'Bearer '+token;
       console.log(req.headers.authorization);
       res
