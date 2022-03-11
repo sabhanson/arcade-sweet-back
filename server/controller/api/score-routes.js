@@ -57,7 +57,7 @@ router.post("/top/", async (req, res) => {
   console.log("req = "+req);
   let gamevalue = req.body.gamevalue;
   try{
-    const tops = await Score.find({gamevalue: gamevalue}).sort({score:-1}).limit(3)
+    const tops = await Score.find({gamevalue: gamevalue}).sort({score:1}).limit(3)
     res.json(tops);
     console.log("tops = "+JSON.stringify(tops));
   } catch(error) {
