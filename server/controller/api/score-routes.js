@@ -9,14 +9,14 @@ router.get("/", async(req,res)=>{
         res.json(score);
     }
     catch (error) {
-       
         res.status(500).json({ message: "ERRORRRRR" });
     }
 })
 
 
 router.post("/", async  (req, res) => {
-        const token = req.headers?.authorization
+        const token = req.headers?.authorization?.split(" ").pop();
+        console.log("token = "+token);
         const decodedToken = await jwt.verify(token, JWT_SECRET, (err , decoded) =>{
           if (err) {
             console.log(err)
@@ -24,9 +24,15 @@ router.post("/", async  (req, res) => {
           } else {
             return decoded
           }
-        } )
-        console.log(decodedToken)
-        Score.create(req.body)
+        } );
+        console.log("decodedToken = "+decodedToken);
+        const scoreJson = {
+          score: req.body.score,
+          gamevalue: req.body.gamevalue,
+          username: decodedToken.username
+        };
+        
+        Score.create(scoreJson)
           .then((newScore) => {
            return User.findOneAndUpdate(
               {   username: decodedToken.username },
@@ -37,7 +43,6 @@ router.post("/", async  (req, res) => {
           .then((data) => {;
             if (!data) {
              return res.status(404).json({ message: "user does not exist" });
-              
             }
             return res.status(200).json(data);
           })
@@ -46,5 +51,19 @@ router.post("/", async  (req, res) => {
             return res.status(500).json(err);
           });
       }); 
+
+
+router.post("/top/", async (req, res) => {
+  console.log("req = "+req);
+  let gamevalue = req.body.gamevalue;
+  try{
+    const tops = await Score.find({gamevalue: gamevalue}).sort({score:-1}).limit(3)
+    res.json(tops);
+    console.log("tops = "+JSON.stringify(tops));
+  } catch(error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}); 
 
 module.exports = router;
