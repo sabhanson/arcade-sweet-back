@@ -5,7 +5,7 @@
 Arcade-Sweet is a react app for simple games that is community powered.
 Users can play a "sweet" of games that are tracked by highscores and earn badges for overall wins!
 They can also post reviews of the games to give feedback for other players to read and make desicions on what games to play.
-This is the API used in the [deployment]() of our application.
+This is the API used in the [deployment](https://arcade-sweet.herokuapp.com/) of our application.
 
 
 ## Table of Contents 
