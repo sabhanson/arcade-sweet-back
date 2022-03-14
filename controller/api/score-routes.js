@@ -15,42 +15,44 @@ router.get("/", async(req,res)=>{
 
 
 router.post("/", async  (req, res) => {
-        const token = req.headers?.authorization?.split(" ").pop();
-        console.log("token = "+token);
-        const decodedToken = await jwt.verify(token, JWT_SECRET, (err , decoded) =>{
-          if (err) {
-            console.log(err)
-            res.status(403).json({ msg: 'invalid credentials'})
-          } else {
-            return decoded
+    const token = req.headers?.authorization?.split(" ").pop();
+    if(token) {
+      console.log("token = "+JSON.stringify(token));
+      const decodedToken = await jwt.verify(token, JWT_SECRET, (err , decoded) =>{
+        if (err) {
+          console.log(err)
+          res.status(403).json({ msg: 'invalid credentials'})
+        } else {
+          return decoded
+        }
+      } );
+      console.log("decodedToken = "+decodedToken);
+      const scoreJson = {
+        score: req.body.score,
+        gamevalue: req.body.gamevalue,
+        username: decodedToken.username
+      };
+      
+      Score.create(scoreJson)
+        .then((newScore) => {
+         return User.findOneAndUpdate(
+            {   username: decodedToken.username },
+            { $addToSet: { scores: newScore._id} },
+            { new: true }
+          );
+        })
+        .then((data) => {;
+          if (!data) {
+           return res.status(404).json({ message: "user does not exist" });
           }
-        } );
-        console.log("decodedToken = "+decodedToken);
-        const scoreJson = {
-          score: req.body.score,
-          gamevalue: req.body.gamevalue,
-          username: decodedToken.username
-        };
-        
-        Score.create(scoreJson)
-          .then((newScore) => {
-           return User.findOneAndUpdate(
-              {   username: decodedToken.username },
-              { $addToSet: { scores: newScore._id} },
-              { new: true }
-            );
-          })
-          .then((data) => {;
-            if (!data) {
-             return res.status(404).json({ message: "user does not exist" });
-            }
-            return res.status(200).json(data);
-          })
-          .catch((err) => {
-            console.log(err);
-            return res.status(500).json(err);
-          });
-      }); 
+          return res.status(200).json(data);
+        })
+        .catch((err) => {
+          console.log(err);
+          return res.status(500).json(err);
+        });
+    }
+}); 
 
 
 router.post("/top/", async (req, res) => {
