@@ -109,26 +109,4 @@ router.delete("/:userId", async (req, res) => {
   }
 });
 
-
-// router.delete("/", async (req, res) => {
-//   const token = req.headers?.authorization;
-//   const decodedToken = await jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-//     if (err) {
-//       console.log(err);
-//       res.status(403).json({ msg: "invalid credentials" });
-//     } else {
-//       return decoded;
-//     }
-//   });
-//   User.findOneAndDelete(
-//     { username: decodedToken.username }
-//   )
-//   .then((userData) => {
-//     res.json({ user, message: "Gamer Profile Deleted!" });
-//   })
-//   .catch((error) => {
-//     res.status(500).json({ message: "ERRORRRRR" });
-//   })
-  
-// })
 module.exports = router;

@@ -1,7 +1,5 @@
 const express = require('express');
 const path = require('path');
-// const MongoStore = require("connect-mongo");
-// const session = require('express-session')
 const routes = require('./controller');
 const mongoose = require('./config/connection');
 const cors = require("cors");
