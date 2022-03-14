@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const {User, Score} = require('../../models');
 const jwt = require('jsonwebtoken')
-// require('dotenv').config();
-// const JWT_SECRET="Arcade-Sweet";
 
 //Signup
 router.post('/signup', async (req, res) => {
