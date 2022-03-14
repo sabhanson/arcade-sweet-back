@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../../models').User;
+const {User, Score} = require('../../models');
 const jwt = require('jsonwebtoken')
 // require('dotenv').config();
 // const JWT_SECRET="Arcade-Sweet";
@@ -86,19 +86,38 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//Logout
-router.post('/logout', (req, res) => {
-    // if (req.session.user) {
-    //   req.session.destroy(() => {
-    //      console.log(req.session);
-    //     res.status(204).end();
-    //   });
-    // } else {
-     
-    //   res.status(404).end();
-    // }
-  console.log(req.header)
-});
+router.post("/score/", async (req, res) => {
+  const token = req.headers?.authorization?.split(" ").pop();
+  if(token) {
+    console.log("token = "+JSON.stringify(token));
+    const decodedToken = await jwt.verify(token, process.env.JWT_SECRET, (err , decoded) =>{
+      if (err) {
+        console.log(err)
+        res.status(403).json({ msg: 'invalid credentials'})
+      } else {
+        return decoded
+      }
+    } );
+    console.log("decodedToken = "+decodedToken);
+    let gamevalue = req.body.gamevalue;
+    let score = {};
+    try{
+      if(gamevalue == 1) {
+        score = await Score.find({gamevalue: gamevalue, username:decodedToken.username})
+                           .sort({score:1})
+                           .limit(1);
+      } else if(gamevalue == 2) {
+        score = await Score.find({gamevalue: gamevalue, username:decodedToken.username})
+                           .sort({score:1});
+      }
+      res.json(score);
+      console.log("tops = "+JSON.stringify(score));
+    } catch(error) {
+      console.log(error);
+      res.status(500).json({ error });
+    }
+  }
+}); 
 
 
 
