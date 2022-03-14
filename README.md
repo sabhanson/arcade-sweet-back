@@ -104,7 +104,7 @@ All tests were performed and passed by the developer team.
 * [Atlas](https://www.mongodb.com/atlas/database) Deployed DB infastructure
 * [Heroku](https://www.heroku.com/home) react npm package
 * [Bcrypt](https://www.npmjs.com/package/bcrypt) cloud application platform
-* [JsonWebToken](https://jwt.io/)) No session authentication for communication between front and back end
+* [JsonWebToken](https://jwt.io/) No session authentication for communication between front and back end
 
 
 ## Questions
