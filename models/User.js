@@ -70,11 +70,11 @@ userSchema.post('findOneAndUpdate', async function(next) {
             // Hash the password
             const saltRounds = 10;
             let newPass = await bcrypt.hash(update.$set.password, saltRounds);
-            update.$set.password = newPass
+            update.$set.password = newPass;
+            console.log("update = "+JSON.stringify(update));
+            //this._condition means for which password is getting updated
+            await this.model.updateOne(this._condition, update);
         }
-        console.log("update = "+JSON.stringify(update));
-        //this._condition means for which password is getting updated
-        await this.model.updateOne(this._condition, update);
     }
   });
   
@@ -82,11 +82,6 @@ userSchema.post('findOneAndUpdate', async function(next) {
 userSchema.methods.isCorrectPassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };
-
-// userSchema.methods.pre('save', function(next) {
-//     this._doc.password = encrypt(this._doc.password);
-//     next();
-//   });
 
 const User = model('User', userSchema);
 
